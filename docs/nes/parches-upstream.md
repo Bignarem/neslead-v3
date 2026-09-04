@@ -19,3 +19,7 @@ commit. En cada actualización desde upstream se revisa esta lista y nada más.
 | src/client/features/onboarding/useOnboardingRedirect.ts | no redirige si ONBOARDING_ENABLED=false | T6 |
 | vite.config.ts | expone ONBOARDING_ENABLED al cliente vía envPrefix | T6 |
 | src/env.d.ts | tipo ImportMetaEnv.ONBOARDING_ENABLED (lo exigía types:check) | T6 |
+| src/db/schema.ts | registra nes.schema (imports, tipo, runtime, exports) | T9 |
+| src/db/d1/schema.ts | export * nes.schema | T9 |
+| src/db/pg/schema.ts | export * nes.schema | T9 |
+| src/db/schema-parity.test.ts | incluye nes.schema en ambas listas | T9 |
