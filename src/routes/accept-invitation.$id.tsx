@@ -37,10 +37,10 @@ function SignedOutInvitationCard({ invitationId }: { invitationId: string }) {
   const redirect = `/accept-invitation/${invitationId}`;
 
   return (
-    <AuthPageCard title="You&rsquo;re invited">
+    <AuthPageCard title="Te invitaron">
       <p className="text-sm text-base-content/70">
-        You&rsquo;ve been invited to join an organization on OpenSEO. Sign in
-        with the email address that received the invitation to accept it.
+        Te invitaron a unirte a una organización en neslead. Inicia sesión con
+        el correo que recibió la invitación para aceptarla.
       </p>
       <div className="space-y-2">
         <Link
@@ -48,14 +48,14 @@ function SignedOutInvitationCard({ invitationId }: { invitationId: string }) {
           search={{ redirect }}
           className="btn btn-soft w-full"
         >
-          Create account
+          Crear cuenta
         </Link>
         <Link
           to="/sign-in"
           search={{ redirect }}
           className="btn btn-ghost w-full"
         >
-          Sign in
+          Iniciar sesión
         </Link>
       </div>
     </AuthPageCard>
@@ -80,7 +80,7 @@ function InvitationCard({
         query: { id: invitationId },
       });
       if (result.error) {
-        throw new Error(result.error.message || "Invitation not found");
+        throw new Error(result.error.message || "Invitación no encontrada");
       }
       return result.data;
     },
@@ -96,7 +96,7 @@ function InvitationCard({
       });
       if (accepted.error) {
         setActionError(
-          accepted.error.message || "We couldn't accept the invitation.",
+          accepted.error.message || "No pudimos aceptar la invitación.",
         );
         setIsSubmitting(false);
         return;
@@ -113,7 +113,7 @@ function InvitationCard({
       // workspace.
       window.location.assign("/");
     } catch {
-      setActionError("We couldn't accept the invitation. Please try again.");
+      setActionError("No pudimos aceptar la invitación. Intenta de nuevo.");
       setIsSubmitting(false);
     }
   }
@@ -127,7 +127,7 @@ function InvitationCard({
       });
       if (result.error) {
         setActionError(
-          result.error.message || "We couldn't decline the invitation.",
+          result.error.message || "No pudimos rechazar la invitación.",
         );
         setIsSubmitting(false);
         return;
@@ -135,14 +135,14 @@ function InvitationCard({
       captureClientEvent("team:invitation_decline");
       setDeclined(true);
     } catch {
-      setActionError("We couldn't decline the invitation. Please try again.");
+      setActionError("No pudimos rechazar la invitación. Intenta de nuevo.");
       setIsSubmitting(false);
     }
   }
 
   if (invitationQuery.isPending) {
     return (
-      <AuthPageCard title="Checking invitation...">
+      <AuthPageCard title="Comprobando la invitación...">
         <div className="flex justify-center py-4">
           <span className="loading loading-spinner loading-md" />
         </div>
@@ -152,18 +152,19 @@ function InvitationCard({
 
   if (invitationQuery.isError) {
     return (
-      <AuthPageCard title="Invitation unavailable">
+      <AuthPageCard title="Invitación no disponible">
         <p className="text-sm text-base-content/70">
-          This invitation may have expired, been canceled, or belong to a
-          different email address. You&rsquo;re signed in as{" "}
+          Esta invitación puede haber vencido, haberse cancelado, o ser para un
+          correo distinto. Iniciaste sesión como{" "}
           <span className="font-medium" data-ph-mask>
             {userEmail}
           </span>
           .
         </p>
         <p className="text-sm text-base-content/70">
-          If the invitation was sent to another address, sign out and sign back
-          in with that email. Otherwise ask your teammate to send a new invite.
+          Si la invitación se envió a otro correo, cierra sesión y vuelve a
+          entrar con ese correo. Si no, pide a tu compañero que envíe una
+          invitación nueva.
         </p>
         <div className="space-y-2">
           <button
@@ -175,10 +176,10 @@ function InvitationCard({
               signOutAndRedirect();
             }}
           >
-            Use a different account
+            Usar otra cuenta
           </button>
           <Link to="/" className="btn btn-ghost w-full">
-            Go to dashboard
+            Ir al panel
           </Link>
         </div>
       </AuthPageCard>
@@ -187,32 +188,32 @@ function InvitationCard({
 
   if (declined) {
     return (
-      <AuthPageCard title="Invitation declined">
+      <AuthPageCard title="Invitación rechazada">
         <p className="text-sm text-base-content/70">
-          You declined the invitation to join{" "}
+          Rechazaste la invitación para unirte a{" "}
           <span className="font-medium">
             {invitationQuery.data.organizationName}
           </span>
           .
         </p>
         <Link to="/" className="btn btn-ghost w-full">
-          Go to dashboard
+          Ir al panel
         </Link>
       </AuthPageCard>
     );
   }
 
   return (
-    <AuthPageCard title="Join organization">
+    <AuthPageCard title="Unirse a la organización">
       <p className="text-sm text-base-content/70">
         <span className="font-medium" data-ph-mask>
           {invitationQuery.data.inviterEmail}
         </span>{" "}
-        invited you to join{" "}
+        te invitó a unirte a{" "}
         <span className="font-medium">
           {invitationQuery.data.organizationName}
         </span>{" "}
-        on OpenSEO.
+        en neslead.
       </p>
       {actionError ? <p className="text-sm text-error">{actionError}</p> : null}
       <div className="space-y-2">
@@ -222,7 +223,7 @@ function InvitationCard({
           disabled={isSubmitting}
           onClick={() => void handleAccept()}
         >
-          {isSubmitting ? "Joining..." : "Accept invitation"}
+          {isSubmitting ? "Uniéndote..." : "Aceptar invitación"}
         </button>
         <button
           type="button"
@@ -230,7 +231,7 @@ function InvitationCard({
           disabled={isSubmitting}
           onClick={() => void handleDecline()}
         >
-          Decline
+          Rechazar
         </button>
       </div>
     </AuthPageCard>

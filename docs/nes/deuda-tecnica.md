@@ -19,7 +19,7 @@ crons hasta que `WORKERS_PAID_PLAN=true`.
 Cloudflare Workers de esta cuenta, ambas cosas la rechazan:
 
 - `limits.cpuMs` es una función exclusiva de plan pago (`BadRequest: CPU limits are not
-supported for the Free plan`).
+  supported for the Free plan`).
 - Los cron triggers tienen un tope de 5 por cuenta en el plan gratis, compartido con otros
   proyectos de la cuenta (`amja-scheduled-rebuild`, `nespos-outbox-cron`); `open-seo-selfhost`
   ya usaba 2, así que sumar los 2 de `open-seo` (neslead) rebasaba el tope. `open-seo-selfhost`
@@ -110,3 +110,16 @@ ponerlo en `true`). No hace falta tocar código: `src/routes/_app/ai.tsx`,
 `src/client/components/Sidebar.tsx`, `src/client/features/dashboard/DashboardPage.tsx` y
 `src/client/features/dashboard/dashboardSteps.ts` ya vuelven a mostrar todo tal como estaba
 antes de este cambio.
+
+**Asimetría conocida entre `/ai` y `/p/:id/sam` (revisión de la ronda 1, no corregida):**
+las dos rutas usan el mismo `beforeLoad` con `notFound()`, pero no bloquean de la misma
+manera. `/ai` cuelga de `_app`, que sí renderiza en el servidor: con `AI_AGENT_ENABLED=false`
+el servidor devuelve un 404 real, antes de que llegue nada al navegador. `/p/:id/sam` cuelga
+de `_project/p/$projectId/route.tsx`, que tiene `ssr: false` a propósito (motivo ajeno a esta
+tarea: datos de cuenta con caché a nivel de módulo — ver el comentario de ese archivo). Sin
+SSR en ese árbol, el `beforeLoad` solo corre en el cliente, así que el bloqueo pasa después de
+hidratar, no como un 404 de servidor. La revisión en vivo confirmó que **no hay fuga de
+contenido** — `beforeLoad` corre antes de montar `SamChat`, igual con o sin SSR — solo cambia
+el mecanismo (código de estado HTTP real vs. componente 404 del router tras hidratar). Igualar
+las dos exigiría tocar `ssr: false` en `_project/p/$projectId/route.tsx`, una decisión de otro
+motivo y fuera de esta tarea; no se toca mientras no haga falta.

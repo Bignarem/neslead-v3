@@ -33,13 +33,13 @@ function AuthErrorPage() {
         footer={
           error ? (
             <p className="font-mono text-xs text-base-content/40">
-              Code: {error}
+              Código: {error}
             </p>
           ) : undefined
         }
       >
         <Link to="/" className="btn btn-soft w-full">
-          Back to OpenSEO
+          Volver al inicio
         </Link>
       </AuthPageCard>
     </AuthPageShell>

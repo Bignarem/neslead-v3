@@ -12,32 +12,34 @@ export function googleAuthErrorCopy(
   code: string,
   providerLabel?: string,
 ): { title: string; description: string } {
-  const what = providerLabel ? `${providerLabel} connection` : "Google sign-in";
+  const what = providerLabel
+    ? `La conexión con ${providerLabel}`
+    : "El inicio de sesión con Google";
 
   switch (code) {
     case "state_mismatch":
       return {
-        title: `${what} didn't finish`,
+        title: `${what} no terminó`,
         description:
-          "The attempt expired or was interrupted. Try again in a single browser tab and finish the Google steps within 10 minutes. If it keeps happening, make sure your browser allows cookies for this site.",
+          "El intento expiró o se interrumpió. Vuelve a intentarlo en una sola pestaña del navegador y completa los pasos de Google en menos de 10 minutos. Si sigue pasando, revisa que tu navegador permita cookies para este sitio.",
       };
     case "access_denied":
       return {
-        title: `${what} was canceled`,
+        title: `${what} se canceló`,
         description:
-          "Google's permission screen was closed or declined. Try again whenever you're ready.",
+          "Se cerró o se rechazó la pantalla de permisos de Google. Vuelve a intentarlo cuando quieras.",
       };
     case "account_already_linked_to_different_user":
       return {
-        title: "Google account already connected",
+        title: "Esa cuenta de Google ya está conectada",
         description:
-          "That Google account is already linked to a different OpenSEO account. Disconnect it there first, or contact support and we'll move it over.",
+          "Esa cuenta de Google ya está vinculada a otra cuenta de neslead. Desconéctala ahí primero, o contacta a soporte para transferirla.",
       };
     default:
       return {
-        title: `${what} didn't finish`,
+        title: `${what} no terminó`,
         description:
-          "Something went wrong while talking to Google. Please try again — if it keeps failing, contact support.",
+          "Algo salió mal al comunicarnos con Google. Vuelve a intentarlo; si el problema sigue, contacta a soporte.",
       };
   }
 }
