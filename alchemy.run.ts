@@ -475,10 +475,15 @@ export default Alchemy.Stack(
       // Scheduled rank checks — src/server.ts `scheduled` handler. Cron
       // triggers share a hard per-ACCOUNT cap of 5 on the Workers free plan
       // (unrelated workers on this account already use some), raised to
-      // 1,000 on paid. A preview only claims its schedules once
-      // WORKERS_PAID_PLAN=true; until then it deploys with none, same gate
-      // as the CPU limit above.
-      crons: prod || workersPaidPlan ? wrangler.triggers.crons : [],
+      // 1,000 on paid. Self-host (cloudflare_access) always gets its
+      // schedules, unaffected — it was never the stage hitting the cap.
+      // Any other stage (previews) only claims them once WORKERS_PAID_PLAN=
+      // true; until then it deploys with none, same gate as the CPU limit
+      // above.
+      crons:
+        authMode === "cloudflare_access" || prod || workersPaidPlan
+          ? wrangler.triggers.crons
+          : [],
       env: {
         ...resources,
         ...dataEnv,

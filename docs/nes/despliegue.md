@@ -74,12 +74,12 @@ nombres que reporta `pnpm alchemy deploy --env-file .env.selfhost --stage selfho
   es lo que controla el mensaje que ve el cliente. No se tocó: es código de la Tarea 6, no de
   esta.
 - Qué falta para completar la puerta de la fase 1:
-  1. **Las dos claves de Turnstile** (`TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY`) — Neudys
-     las está gestionando (el token de Cloudflare a mano da 403 en Turnstile). Sin ellas la
-     etapa funciona igual (el plugin de captcha se omite si falta el secreto), solo que el
-     registro queda sin captcha hasta que existan.
+  1. **Precondición — las dos claves de Turnstile** (`TURNSTILE_SITE_KEY`,
+     `TURNSTILE_SECRET_KEY`) puestas en `.env.preview` y desplegadas. Neudys las está
+     gestionando (el token de Cloudflare a mano da 403 en Turnstile). No es un pendiente
+     paralelo: es requisito para el paso 2 — ver el primer paso del procedimiento de abajo.
   2. **El primer registro de la cuenta de la agencia**, que solo puede hacer Neudys en el
-     navegador (procedimiento exacto abajo).
+     navegador, y solo después de completado el punto 1 (procedimiento exacto abajo).
 - Puerta parcial de la fase 1: PENDIENTE — la prueba Neudys en el navegador
 - `INVITE_ONLY_SIGNUP=true` en `.env.preview` — la etapa quedó con el registro cerrado.
 - Deuda técnica de esta etapa: ver `docs/nes/deuda-tecnica.md` — límites de CPU y cron
@@ -91,28 +91,33 @@ La cuenta de la agencia no puede registrarse sola: `INVITE_ONLY_SIGNUP=true` rec
 cualquiera sin invitación previa, y todavía no existe ninguna organización que pueda invitar
 a alguien. Hay que abrir la bandera una sola vez, registrarse, y volver a cerrarla.
 
-1. **Abrir el registro.** En `/Users/bignarem/dev/neslead-v3/.env.preview`, cambiar la línea
+1. **NO EJECUTAR ESTE PROCEDIMIENTO hasta que `TURNSTILE_SITE_KEY` y `TURNSTILE_SECRET_KEY`
+   estén puestas en `.env.preview` y desplegadas.** Con las dos vacías,
+   `hasHostedTurnstileConfig()` (`src/lib/auth-turnstile.ts`) pasa igual — el chequeo falla
+   *abierto*, no cerrado — así que la ventana del paso 3 con `INVITE_ONLY_SIGNUP=false`
+   quedaría en internet sin ningún captcha que frene registros automatizados.
+2. **Abrir el registro.** En `/Users/bignarem/dev/neslead-v3/.env.preview`, cambiar la línea
    `INVITE_ONLY_SIGNUP=true` a `INVITE_ONLY_SIGNUP=false`.
-2. **Redesplegar** para que el cambio llegue al worker:
+3. **Redesplegar** para que el cambio llegue al worker:
    ```bash
    cd /Users/bignarem/dev/neslead-v3
    pnpm deploy:preview --stage neslead --yes
    ```
    Cómo saber que quedó bien: el comando termina con una línea `Done: N succeeded` y sin
    `ERROR` en la salida.
-3. **Registrarse en el navegador** en https://open-seo-neslead.neshost.workers.dev con
+4. **Registrarse en el navegador** en https://open-seo-neslead.neshost.workers.dev con
    `neudys21@gmail.com` y una contraseña.
-4. **Verificar el correo.** Llega desde el remitente propio sobre `neslead.com` (Tarea 6b).
+5. **Verificar el correo.** Llega desde el remitente propio sobre `neslead.com` (Tarea 6b).
    Cómo saber que quedó bien: al hacer clic en el enlace del correo, la sesión queda iniciada
    y se ve el tablero con una organización ya creada — no debe redirigir a `/onboarding`.
-5. **Cerrar el registro otra vez.** En `.env.preview`, volver
+6. **Cerrar el registro otra vez.** En `.env.preview`, volver
    `INVITE_ONLY_SIGNUP=false` a `INVITE_ONLY_SIGNUP=true`.
-6. **Redesplegar de nuevo:**
+7. **Redesplegar de nuevo:**
    ```bash
    cd /Users/bignarem/dev/neslead-v3
    pnpm deploy:preview --stage neslead --yes
    ```
-   Cómo saber que quedó bien: repetir el paso 3 con un correo distinto debe devolver un error
+   Cómo saber que quedó bien: repetir el paso 4 con un correo distinto debe devolver un error
    (no debe poder registrarse nadie más).
 
 No saltarse el paso 5-6: dejar la bandera abierta deja el registro público abierto en un

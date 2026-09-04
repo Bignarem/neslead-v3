@@ -6,10 +6,14 @@ quitó, por qué, qué se pierde mientras tanto, y el paso exacto para revertir.
 ## Límites de CPU y cron triggers desactivados en previews sobre plan gratis (T7)
 
 **Qué se quitó:** en `alchemy.run.ts`, el worker `open-seo` (app principal) y `open-seo-audit`
-dejaron de pedir `limits: { cpuMs: 300_000 }` en cualquier etapa que no sea prod, salvo que
-`WORKERS_PAID_PLAN=true` esté en el archivo de entorno. Lo mismo con los cron triggers del
-worker `open-seo` (rank checks cada 5 min + GC diario de OAuth KV): en una etapa que no sea prod,
-solo se registran con `WORKERS_PAID_PLAN=true`.
+dejaron de pedir `limits: { cpuMs: 300_000 }` en cualquier etapa que no sea prod ni self-host,
+salvo que `WORKERS_PAID_PLAN=true` esté en el archivo de entorno (self-host, `cloudflare_access`,
+nunca pidió este límite — eso no cambió). Lo mismo con los cron triggers del worker `open-seo`
+(rank checks cada 5 min + GC diario de OAuth KV), con un matiz importante: **este gate afecta
+solo a la etapa alojada (`neslead` y cualquier otra preview), nunca a `selfhost`**. Self-host
+sigue registrando sus crons exactamente como antes, sin condición — no tenía el problema de
+cuota y no debía tocarse. Solo una etapa que no sea prod ni self-host deja de registrar sus
+crons hasta que `WORKERS_PAID_PLAN=true`.
 
 **Por qué:** al desplegar la etapa `neslead` (staging, modo hosted) contra el plan gratis de
 Cloudflare Workers de esta cuenta, ambas cosas la rechazan:
@@ -17,7 +21,10 @@ Cloudflare Workers de esta cuenta, ambas cosas la rechazan:
   supported for the Free plan`).
 - Los cron triggers tienen un tope de 5 por cuenta en el plan gratis, compartido con otros
   proyectos de la cuenta (`amja-scheduled-rebuild`, `nespos-outbox-cron`); `open-seo-selfhost`
-  ya usaba 2, así que sumar los 2 de `open-seo` (neslead) rebasaba el tope.
+  ya usaba 2, así que sumar los 2 de `open-seo` (neslead) rebasaba el tope. `open-seo-selfhost`
+  no es el problema — sus 2 crons siguen contando contra el tope igual que antes, pero se
+  quedan porque ya estaban reconciliados y funcionando; el gate solo evita que `neslead` sume
+  2 más.
 
 El plan del proyecto (`task-7-brief.md`, restricciones globales) dice explícitamente: fases 0 y
 1 en plan gratis, Workers Paid recién antes de la Tarea 10. Sin este atajo, la etapa de
