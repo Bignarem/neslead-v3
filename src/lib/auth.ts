@@ -370,11 +370,15 @@ function getGoogleSocialProviderConfig() {
   };
 }
 
+// A propósito lee solo el binding de Workers (Reflect.get(env, ...)), no
+// process.env: hasHostedAuthConfig() la llama sin await desde dos rutas de
+// upstream, y volverla async propagaría ese await a esos archivos con
+// riesgo de que a alguno se le olvide (el chequeo quedaría siempre en
+// verdadero). Por eso NO llama a hasResendEmailConfig() de resend.ts, que sí
+// es async y sí mira process.env primero: puede diferir de esta función al
+// probar el modo alojado en local, si RESEND_API_KEY solo está en
+// process.env o en .env.local y no en el binding de Workers.
 function hasHostedAuthEmailConfig() {
-  // Mismo chequeo que hacía hasResendEmailConfig() en resend.ts, pero
-  // síncrono: esta función la usa hasHostedAuthConfig(), que dos rutas
-  // llaman fuera de un await, y RESEND_API_KEY es la única variable que
-  // hace falta (Resend no usa plantillas alojadas).
   const value: unknown = Reflect.get(env, "RESEND_API_KEY");
   return typeof value === "string" && value.trim() !== "";
 }

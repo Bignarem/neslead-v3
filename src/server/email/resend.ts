@@ -36,6 +36,10 @@ async function sendResendEmail({
       Authorization: `Bearer ${apiKey}`,
     },
     body: JSON.stringify({ from, to, subject, html }),
+    // Mismo timeout que usaba loops.ts: sin esto, un fetch colgado a la API
+    // de Resend consume tiempo de CPU facturado en el Worker sin límite y
+    // deja al usuario esperando sin respuesta.
+    signal: AbortSignal.timeout(10_000),
   });
 
   if (response.ok) {

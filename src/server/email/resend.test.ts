@@ -77,6 +77,7 @@ describe("sendHostedVerificationEmail", () => {
     expect(init?.headers).toMatchObject({
       Authorization: "Bearer re_test_123456",
     });
+    expect(init?.signal).toBeInstanceOf(AbortSignal);
 
     const body = parseResendRequestBody(init);
     expect(body.to).toBe("cliente@example.com");
