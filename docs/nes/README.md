@@ -9,6 +9,7 @@ Repo: `Bignarem/neslead-v3`. El nombre `neslead` lo ocupa todavía el CRM anteri
 - Lo propio vive en `src/*/features/<nombre>` y `src/db/nes.schema.ts`.
 - Archivos de upstream que tocamos: `docs/nes/parches-upstream.md`.
 - Cómo actualizar desde upstream: `docs/nes/actualizar-upstream.md`.
+- Sistema de diseño de pantallas (anchos, patrones de tabla/formulario/estados): `docs/nes/diseno.md`.
 
 ## Tests rotos en upstream
 
