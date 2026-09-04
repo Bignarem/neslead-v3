@@ -13,3 +13,5 @@ commit. En cada actualización desde upstream se revisa esta lista y nada más.
 | src/client/styles/app.css | --color-primary y --color-accent al violeta de neslead (tema claro y oscuro) | T4 |
 | src/server/email/loops.ts | appName "neslead" en los tres correos | T4 |
 | public/*.png, favicon.ico | pendiente: iconos de neslead | T4 |
+| src/server/lib/dataforseo/client.ts | meterDataforseoCall salta el cobro cuando BILLING_PROVIDER=none | T5 |
+| src/server/lib/dataforseo/client.test.ts | mock de getOptionalEnvValue para que las pruebas de cobro por Autumn sigan pasando BILLING_PROVIDER=autumn | T5 |

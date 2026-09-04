@@ -55,6 +55,7 @@ import {
   fetchLlmResponse,
   fetchLlmTopPages,
 } from "@/server/lib/dataforseo/ai";
+import { getBillingProvider } from "@/server/lib/billing-provider";
 import { isHostedServerAuthMode } from "@/server/lib/runtime-env";
 import { AppError } from "@/server/lib/errors";
 
@@ -153,8 +154,9 @@ async function meterDataforseoCall<T>(
   creditFeature?: CreditFeature,
 ): Promise<T> {
   const isHostedMode = await isHostedServerAuthMode();
+  const billingProvider = await getBillingProvider();
 
-  if (!isHostedMode) {
+  if (!isHostedMode || billingProvider === "none") {
     const result = await execute();
     return result.data;
   }

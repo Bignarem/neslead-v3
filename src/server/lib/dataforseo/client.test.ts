@@ -14,13 +14,19 @@ interface TrackCallArg {
   properties?: { balanceFeatureId: string };
 }
 
-const { checkMock, trackMock, getOrCreateMock, isHostedServerAuthModeMock } =
-  vi.hoisted(() => ({
-    checkMock: vi.fn(),
-    trackMock: vi.fn<(arg: TrackCallArg) => void>(),
-    getOrCreateMock: vi.fn(),
-    isHostedServerAuthModeMock: vi.fn(),
-  }));
+const {
+  checkMock,
+  trackMock,
+  getOrCreateMock,
+  isHostedServerAuthModeMock,
+  getOptionalEnvValueMock,
+} = vi.hoisted(() => ({
+  checkMock: vi.fn(),
+  trackMock: vi.fn<(arg: TrackCallArg) => void>(),
+  getOrCreateMock: vi.fn(),
+  isHostedServerAuthModeMock: vi.fn(),
+  getOptionalEnvValueMock: vi.fn(),
+}));
 
 vi.mock("cloudflare:workers", () => ({
   waitUntil: vi.fn(),
@@ -47,6 +53,7 @@ vi.mock("@/server/billing/subscription", async (importOriginal) => {
 
 vi.mock("@/server/lib/runtime-env", () => ({
   isHostedServerAuthMode: isHostedServerAuthModeMock,
+  getOptionalEnvValue: getOptionalEnvValueMock,
 }));
 
 vi.mock("@/server/lib/posthog", () => ({
@@ -119,6 +126,7 @@ const backlinksInput = {
 
 function setupHostedMode() {
   isHostedServerAuthModeMock.mockResolvedValue(true);
+  getOptionalEnvValueMock.mockResolvedValue("autumn");
   getOrCreateMock.mockResolvedValue({ id: "org_123" });
 }
 
