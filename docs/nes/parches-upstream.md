@@ -23,3 +23,5 @@ commit. En cada actualización desde upstream se revisa esta lista y nada más.
 | src/db/d1/schema.ts | export * nes.schema | T9 |
 | src/db/pg/schema.ts | export * nes.schema | T9 |
 | src/db/schema-parity.test.ts | incluye nes.schema en ambas listas | T9 |
+| src/lib/auth.ts | usa el correo propio (Resend) en vez del proveedor de upstream | T6b |
+| src/serverFunctions/organization.ts | import del correo propio (Resend) | T6b |

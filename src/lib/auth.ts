@@ -24,11 +24,11 @@ import { onInvitationAccepted } from "@/server/auth/invited-member";
 import { AuthRepository } from "@/server/auth/repositories/AuthRepository";
 import { getOptionalEnvValue } from "@/server/lib/runtime-env";
 import { captureDubReferralSignup } from "@/server/referrals/dub";
+import { upsertHostedSignupContact } from "@/server/email/loops";
 import {
   sendHostedPasswordResetEmail,
   sendHostedVerificationEmail,
-  upsertHostedSignupContact,
-} from "@/server/email/loops";
+} from "@/server/email/resend";
 
 const hostedBaseUrlSchema = z
   .string()
@@ -371,16 +371,12 @@ function getGoogleSocialProviderConfig() {
 }
 
 function hasHostedAuthEmailConfig() {
-  const loopsVars = [
-    "LOOPS_API_KEY",
-    "LOOPS_TRANSACTIONAL_VERIFY_EMAIL_ID",
-    "LOOPS_TRANSACTIONAL_RESET_PASSWORD_ID",
-  ];
-
-  return loopsVars.every((name) => {
-    const value: unknown = Reflect.get(env, name);
-    return typeof value === "string" && value.trim() !== "";
-  });
+  // Mismo chequeo que hacía hasResendEmailConfig() en resend.ts, pero
+  // síncrono: esta función la usa hasHostedAuthConfig(), que dos rutas
+  // llaman fuera de un await, y RESEND_API_KEY es la única variable que
+  // hace falta (Resend no usa plantillas alojadas).
+  const value: unknown = Reflect.get(env, "RESEND_API_KEY");
+  return typeof value === "string" && value.trim() !== "";
 }
 
 export function hasHostedAuthConfig() {
