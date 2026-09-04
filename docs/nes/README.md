@@ -13,3 +13,8 @@ Repo: `Bignarem/neslead-v3`. El nombre `neslead` lo ocupa todavía el CRM anteri
 ## Tests rotos en upstream
 
 (ninguno)
+
+## Puertas
+
+- Fase 0 (2026-09-04): despliegue tal cual, keyword research / rank check / audit OK. Detalle en `docs/nes/despliegue.md`.
+- Fase 1 (2026-09-04): marca aplicada, el modo alojado ya no depende del cobro ajeno, registro solo por invitación, onboarding apagado. Ensayo de merge contra v0.1.7: 0 conflictos (v0.1.7 sigue siendo la última etiqueta de upstream, así que el ensayo es trivial).
