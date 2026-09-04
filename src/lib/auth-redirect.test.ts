@@ -4,6 +4,7 @@ import {
   getCurrentAuthRedirectFromHref,
   getOAuthAuthorizeRedirectFromSearch,
   getOAuthSignedQuery,
+  getPostSignupRedirect,
   getSignInHref,
   getVerifyEmailSearch,
   normalizeAuthRedirect,
@@ -104,6 +105,24 @@ describe("auth redirect helpers", () => {
   it("prefers OAuth continuation over a generic redirect", () => {
     expect(getAuthRedirectFromSearch(oauthSearch, "/app")).toBe(
       `/api/auth/oauth2/authorize?${oauthSearch}`,
+    );
+  });
+
+  it("sends a fresh signup to the onboarding assistant by default", () => {
+    expect(getPostSignupRedirect("/", undefined)).toBe("/onboarding");
+    expect(getPostSignupRedirect("/", "true")).toBe("/onboarding");
+  });
+
+  it("skips the onboarding assistant when ONBOARDING_ENABLED is false", () => {
+    expect(getPostSignupRedirect("/", "false")).toBe("/");
+  });
+
+  it("never overrides an explicit redirect with onboarding", () => {
+    expect(getPostSignupRedirect("/oauth-consent?client_id=abc", "true")).toBe(
+      "/oauth-consent?client_id=abc",
+    );
+    expect(getPostSignupRedirect("/oauth-consent?client_id=abc", "false")).toBe(
+      "/oauth-consent?client_id=abc",
     );
   });
 });

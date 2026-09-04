@@ -26,7 +26,7 @@ export function useAuthPageState(redirect: string | undefined) {
 
 export function AuthMethodChooser({
   googleLabel,
-  emailLabel = "Continue with email",
+  emailLabel = "Continuar con correo",
   isBusy,
   disabled,
   onContinueWithGoogle,
@@ -48,7 +48,7 @@ export function AuthMethodChooser({
         disabled={disabled || isBusy}
       >
         <GoogleLogo />
-        {isBusy ? "Opening Google..." : googleLabel}
+        {isBusy ? "Abriendo Google..." : googleLabel}
       </button>
 
       <button
@@ -100,11 +100,9 @@ export function AuthPageCard({
   return (
     <div className="w-full max-w-xs space-y-6">
       <div className="text-center space-y-3">
-        <img
-          src="/transparent-logo.png"
-          alt="OpenSEO"
-          className="mx-auto size-10 rounded-lg"
-        />
+        <div className="text-2xl font-bold tracking-tight text-primary">
+          neslead
+        </div>
         <div>
           <h1 className="text-xl font-semibold">{title}</h1>
           {helperText ? (

@@ -73,6 +73,19 @@ export function getCurrentAuthRedirectFromHref(href: string) {
   return normalizeAuthRedirect(`${url.pathname}${url.search}${url.hash}`);
 }
 
+export function getPostSignupRedirect(
+  redirectTo: string,
+  onboardingEnabled: string | undefined,
+) {
+  // The welcome assistant only makes sense as the default landing spot when
+  // it's actually turned on — this value travels inside the verification
+  // email link, so a disabled flag has to be honored here, not just at the
+  // moment a session lands on "/".
+  return redirectTo === "/" && onboardingEnabled !== "false"
+    ? "/onboarding"
+    : redirectTo;
+}
+
 export function getSignInSearch(redirectTo: string) {
   return redirectTo === "/" ? {} : { redirect: redirectTo };
 }
