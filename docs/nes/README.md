@@ -17,4 +17,4 @@ Repo: `Bignarem/neslead-v3`. El nombre `neslead` lo ocupa todavía el CRM anteri
 ## Puertas
 
 - Fase 0 (2026-09-04): despliegue tal cual, keyword research / rank check / audit OK. Detalle en `docs/nes/despliegue.md`.
-- Fase 1 (2026-09-04): marca aplicada, el modo alojado ya no depende del cobro ajeno, registro solo por invitación, onboarding apagado. Ensayo de merge contra v0.1.7: 0 conflictos (v0.1.7 sigue siendo la última etiqueta de upstream, así que el ensayo es trivial).
+- Fase 1 (2026-09-04): marca aplicada; el código del modo alojado ya no exige un sistema de cobro externo (bandera BILLING_PROVIDER); registro solo por invitación; onboarding apagado. Ensayo de merge contra v0.1.7: 0 conflictos, trivial porque v0.1.7 sigue siendo la última etiqueta de upstream y es ancestro directo de HEAD, así que no prueba compatibilidad con una versión nueva. Falta la Tarea 7: todavía no hay ninguna etapa desplegada en modo alojado.
