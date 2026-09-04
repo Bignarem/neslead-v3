@@ -18,7 +18,10 @@ async function listForProject(projectId: string, limit = 200): Promise<Lead[]> {
     .limit(limit);
 }
 
-async function getForProject(id: string, projectId: string): Promise<Lead | null> {
+async function getForProject(
+  id: string,
+  projectId: string,
+): Promise<Lead | null> {
   const rows = await db
     .select()
     .from(nesLeads)
@@ -27,13 +30,20 @@ async function getForProject(id: string, projectId: string): Promise<Lead | null
   return rows[0] ?? null;
 }
 
-async function create(values: Omit<typeof nesLeads.$inferInsert, "id">): Promise<Lead> {
+async function create(
+  values: Omit<typeof nesLeads.$inferInsert, "id">,
+): Promise<Lead> {
   // ISO explícito: el default de columna difiere de formato entre SQLite y
   // Postgres, y resumirLeads/orderBy dependen de un texto ISO-8601 uniforme.
   const now = new Date().toISOString();
   const [row] = await db
     .insert(nesLeads)
-    .values({ id: crypto.randomUUID(), createdAt: now, updatedAt: now, ...values })
+    .values({
+      id: crypto.randomUUID(),
+      createdAt: now,
+      updatedAt: now,
+      ...values,
+    })
     .returning();
   if (!row) throw new Error("Failed to insert nes_lead");
   return row;
@@ -78,12 +88,17 @@ async function addEvent(
 
 // Mismo criterio que addEvent, para la lectura: el filtro por proyecto va en
 // el propio SQL (join contra nes_leads), no en el llamador.
-async function listEvents(leadId: string, projectId: string): Promise<LeadEvent[]> {
+async function listEvents(
+  leadId: string,
+  projectId: string,
+): Promise<LeadEvent[]> {
   const rows = await db
     .select({ event: nesLeadEvents })
     .from(nesLeadEvents)
     .innerJoin(nesLeads, eq(nesLeadEvents.leadId, nesLeads.id))
-    .where(and(eq(nesLeadEvents.leadId, leadId), eq(nesLeads.projectId, projectId)))
+    .where(
+      and(eq(nesLeadEvents.leadId, leadId), eq(nesLeads.projectId, projectId)),
+    )
     .orderBy(desc(nesLeadEvents.id));
   return rows.map((r) => r.event);
 }

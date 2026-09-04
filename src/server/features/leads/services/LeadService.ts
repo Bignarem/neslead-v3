@@ -1,8 +1,20 @@
-import { LeadRepository, type Lead } from "@/server/features/leads/repositories/LeadRepository";
-import { resumirLeads, type ResumenPortada } from "@/server/features/leads/services/resumen";
+import {
+  LeadRepository,
+  type Lead,
+} from "@/server/features/leads/repositories/LeadRepository";
+import {
+  resumirLeads,
+  type ResumenPortada,
+} from "@/server/features/leads/services/resumen";
 import { AppError } from "@/server/lib/errors";
 
-export const ESTADOS = ["nuevo", "contactado", "cotizado", "ganado", "perdido"] as const;
+export const ESTADOS = [
+  "nuevo",
+  "contactado",
+  "cotizado",
+  "ganado",
+  "perdido",
+] as const;
 export type Estado = (typeof ESTADOS)[number];
 
 async function getPortada(projectId: string): Promise<ResumenPortada> {
@@ -23,7 +35,10 @@ async function create(input: {
   notes?: string;
 }): Promise<Lead> {
   if (!input.name && !input.email && !input.phone) {
-    throw new AppError("VALIDATION_ERROR", "Hace falta nombre, correo o teléfono.");
+    throw new AppError(
+      "VALIDATION_ERROR",
+      "Hace falta nombre, correo o teléfono.",
+    );
   }
   const lead = await LeadRepository.create({
     projectId: input.projectId,
@@ -48,7 +63,10 @@ async function cambiarEstado(input: {
   status: Estado;
   amountUsd?: number;
 }): Promise<Lead> {
-  const lead = await LeadRepository.getForProject(input.leadId, input.projectId);
+  const lead = await LeadRepository.getForProject(
+    input.leadId,
+    input.projectId,
+  );
   if (!lead) throw new AppError("NOT_FOUND", "Lead no encontrado.");
   const updated = await LeadRepository.updateStatus(
     lead.id,
