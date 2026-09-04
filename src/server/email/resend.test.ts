@@ -89,6 +89,23 @@ describe("sendHostedVerificationEmail", () => {
     assertNoThirdPartyProviderNamed(body.html);
     assertNoThirdPartyProviderNamed(body.from);
   });
+
+  it("uses RESEND_FROM as the sender when it is set", async () => {
+    setEnv({
+      RESEND_API_KEY: "re_test_123456",
+      RESEND_FROM: "neslead <hola@neslead.com>",
+    });
+
+    await sendHostedVerificationEmail({
+      email: "cliente@example.com",
+      confirmationUrl: "https://neslead.com/verify/abc123",
+    });
+
+    const [, init] = fetchMock.mock.calls[0];
+    expect(parseResendRequestBody(init).from).toBe(
+      "neslead <hola@neslead.com>",
+    );
+  });
 });
 
 describe("sendHostedPasswordResetEmail", () => {
