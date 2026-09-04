@@ -19,8 +19,10 @@ import {
   hasHostedTurnstileConfig,
 } from "@/lib/auth-turnstile";
 import { resolveSignInHostedOrganization } from "@/server/auth/default-hosted-organization";
+import { assertSignupAllowed } from "@/server/auth/invite-only-signup";
 import { onInvitationAccepted } from "@/server/auth/invited-member";
 import { AuthRepository } from "@/server/auth/repositories/AuthRepository";
+import { getOptionalEnvValue } from "@/server/lib/runtime-env";
 import { captureDubReferralSignup } from "@/server/referrals/dub";
 import {
   sendHostedPasswordResetEmail,
@@ -215,6 +217,10 @@ function createAuth() {
           // throwaway-inbox domains before the user row is created. Self-hosted
           // has no shared credit pool to protect, so it's left untouched.
           before: async (user) => {
+            await assertSignupAllowed(
+              user.email,
+              (await getOptionalEnvValue("INVITE_ONLY_SIGNUP")) !== "false",
+            );
             if (
               isHostedAuthMode(env.AUTH_MODE) &&
               isDisposableEmailDomain(user.email)

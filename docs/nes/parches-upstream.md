@@ -15,3 +15,7 @@ commit. En cada actualización desde upstream se revisa esta lista y nada más.
 | public/*.png, favicon.ico | pendiente: iconos de neslead | T4 |
 | src/server/lib/dataforseo/client.ts | meterDataforseoCall salta el cobro cuando BILLING_PROVIDER=none | T5 |
 | src/server/lib/dataforseo/client.test.ts | mock de getOptionalEnvValue para que las pruebas de cobro por Autumn sigan pasando BILLING_PROVIDER=autumn | T5 |
+| src/lib/auth.ts | hook user.create.before llama a assertSignupAllowed (INVITE_ONLY_SIGNUP) | T6 |
+| src/client/features/onboarding/useOnboardingRedirect.ts | no redirige si ONBOARDING_ENABLED=false | T6 |
+| vite.config.ts | expone ONBOARDING_ENABLED al cliente vía envPrefix | T6 |
+| src/env.d.ts | tipo ImportMetaEnv.ONBOARDING_ENABLED (lo exigía types:check) | T6 |

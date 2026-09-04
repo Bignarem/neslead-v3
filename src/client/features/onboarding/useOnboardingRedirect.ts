@@ -21,6 +21,7 @@ export function useOnboardingRedirect() {
 
   useEffect(() => {
     if (
+      import.meta.env.ONBOARDING_ENABLED === "false" ||
       !isHostedMode ||
       !session?.user?.id ||
       !isEmailVerified ||
