@@ -39,3 +39,39 @@ cliente dominicano.
 Referencia si algún día hay que destruir o recrear la etapa: son los mismos
 nombres que reporta `pnpm alchemy deploy --env-file .env.selfhost --stage selfhost`
 ("Done: 20 succeeded", sin errores).
+
+## Etapa `neslead` (staging, modo hosted) — BLOQUEADA
+
+- URL: https://open-seo-neslead.neshost.workers.dev
+- Fecha de despliegue: 2026-09-04
+- Infraestructura: desplegada y viva. `curl -sSI` a la raíz devuelve `200`, sin redirección a
+  `cloudflareaccess.com` (no hay puerta de Cloudflare Access — correcto, la puerta es el login
+  propio). El HTML sirve la app de neslead (`<title>neslead</title>`, módulo
+  `useHostedAuthRouteGuard` cargado), no OpenSEO ni Cloudflare Access.
+- Variables confirmadas en el worker desplegado (por la API de Cloudflare, solo nombres): 
+  `RESEND_API_KEY` (secret_text), `RESEND_FROM` (plain_text), `INVITE_ONLY_SIGNUP` (plain_text),
+  `AUTH_MODE`, `DATABASE_PROVIDER`, `BETTER_AUTH_URL`, `BETTER_AUTH_SECRET`,
+  `DATAFORSEO_API_KEY`, `BYPASS_EMAIL_VERIFICATION`, `OPENSEO_TELEMETRY_DISABLED`, entre otras.
+- **Bloqueo real: el backend de auth no arranca.** `GET /api/auth/get-session` y
+  `POST /api/auth/sign-up/email` devuelven `500 "Missing Better Auth hosted configuration"`.
+  Causa raíz: `src/lib/auth.ts` (`getGoogleSocialProviderConfig`, llamada desde
+  `hasHostedAuthConfig` y desde la construcción de la instancia de auth) exige
+  `GOOGLE_CLIENT_ID` y `GOOGLE_CLIENT_SECRET` **de forma incondicional** en modo `hosted`,
+  aunque el objetivo de esta etapa sea solo correo+contraseña. No es un archivo tocado por
+  NESWEB (código de upstream, sin parchear); no hay bandera para desactivar el login social.
+  No es una variable que estuviera en la lista de la Tarea 7 (`task-7-brief.md` Paso 2) ni en
+  los prerrequisitos de cuentas.
+- **Qué hace falta para destrabar** (decide el negocio, no es un problema técnico de
+  despliegue): o bien Neudys crea un cliente OAuth de Google (Google Cloud Console, tipo Web,
+  con el URI de redirección `https://open-seo-neslead.neshost.workers.dev/api/auth/callback/google`)
+  y se guardan `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET` en `~/.config/neshost/neslead.env`, o
+  bien se decide parchear `src/lib/auth.ts` para que el login social sea opcional en modo
+  hosted (cambio de diseño en código de upstream, fuera del alcance que se me dio para la
+  Tarea 7).
+- **Paso 4 del brief (puerta parcial) no se pudo ejecutar**: ni la comprobación automática
+  (rechazo de registro sin invitación) ni el registro de la cuenta de la agencia son posibles
+  mientras el backend de auth devuelva 500. La bandera `INVITE_ONLY_SIGNUP` quedó en `true` en
+  `.env.preview`, sin ciclo de apertura — no hubo forma de probarlo.
+- Puerta parcial de la fase 1: PENDIENTE — la prueba Neudys en el navegador
+- Deuda técnica pendiente de esta etapa (no relacionada con el bloqueo de arriba): ver
+  `docs/nes/deuda-tecnica.md` — límites de CPU y cron triggers desactivados por el plan gratis.

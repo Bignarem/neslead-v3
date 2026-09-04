@@ -293,6 +293,14 @@ const dataEnv = {
   // Alchemy reconciles worker vars on every deploy, so the telemetry opt-out
   // must live in the env file — a dashboard-set var would be wiped.
   OPENSEO_TELEMETRY_DISABLED: optionalVar("OPENSEO_TELEMETRY_DISABLED"),
+  // Own transactional email sender (src/server/email/resend.ts) and the
+  // invite-only signup gate (src/server/auth/invite-only-signup.ts) read
+  // these at runtime via getOptionalEnvValue, which falls back to the
+  // Workers `env` object — so they must be forwarded here like every other
+  // var/secret above, or the deployed worker never sees them.
+  RESEND_API_KEY: optionalSecret("RESEND_API_KEY"),
+  RESEND_FROM: optionalVar("RESEND_FROM"),
+  INVITE_ONLY_SIGNUP: optionalVar("INVITE_ONLY_SIGNUP"),
 };
 
 export default Alchemy.Stack(
@@ -315,6 +323,13 @@ export default Alchemy.Stack(
     );
     const databaseProvider = yield* optionalVar("DATABASE_PROVIDER");
     const workersSubdomain = yield* readWorkersSubdomain({ required: false });
+    // Configurable CPU limits (below) are a paid-plan feature. Prod is
+    // always paid. Previews aren't necessarily — this project stays on the
+    // Workers free plan through phase 1 (see docs/nes/despliegue.md) — so a
+    // preview only claims the limit when this is explicitly set once the
+    // account goes paid.
+    const workersPaidPlan =
+      (yield* optionalVar("WORKERS_PAID_PLAN")) === "true";
 
     // Auth needs an absolute BETTER_AUTH_URL. Prod sets it explicitly;
     // previews always derive it from the deterministic worker name — a wrong
@@ -379,12 +394,15 @@ export default Alchemy.Stack(
         flags: wrangler.compatibility_flags,
       },
       // Audit workflow steps parse and persist batches of HTML — the same
-      // CPU allowance the app worker used to carry for them. Configurable
-      // CPU limits are a paid-plan feature; self-host deploys
-      // (cloudflare_access) may run on the free plan, which rejects them.
-      ...(authMode === "cloudflare_access"
-        ? {}
-        : { limits: { cpuMs: 300_000 } }),
+      // CPU allowance the app worker used to carry for them. Self-host
+      // deploys (cloudflare_access) may run on the free plan, which rejects
+      // the limit, so those always skip it. Prod is always paid, so it
+      // always claims it. Any other stage (previews) only claims it once
+      // WORKERS_PAID_PLAN=true confirms the account isn't on the free plan
+      // (see workersPaidPlan above).
+      ...(authMode !== "cloudflare_access" && (prod || workersPaidPlan)
+        ? { limits: { cpuMs: 300_000 } }
+        : {}),
       observability: {
         enabled: wrangler.observability?.enabled ?? true,
         traces: { enabled: wrangler.observability?.traces?.enabled ?? false },
@@ -439,21 +457,28 @@ export default Alchemy.Stack(
       },
       // Site audits moved to the open-seo-audit worker, but RankCheckWorkflow
       // still parses SERP batches here — keep the CPU allowance until that
-      // workflow's per-tick CPU is measured or it moves too. Configurable CPU
-      // limits are a paid-plan feature, and self-host deploys
-      // (cloudflare_access) may run on the free plan — which rejects them —
-      // so those get the plan default instead.
-      ...(authMode === "cloudflare_access"
-        ? {}
-        : { limits: { cpuMs: 300_000 } }),
+      // workflow's per-tick CPU is measured or it moves too. Self-host
+      // deploys (cloudflare_access) may run on the free plan — which
+      // rejects the limit — so those always skip it. Prod is always paid,
+      // so it always claims it. Any other stage (previews) only claims it
+      // once WORKERS_PAID_PLAN=true confirms the account isn't on the free
+      // plan (see workersPaidPlan above).
+      ...(authMode !== "cloudflare_access" && (prod || workersPaidPlan)
+        ? { limits: { cpuMs: 300_000 } }
+        : {}),
       observability: {
         enabled: wrangler.observability?.enabled ?? true,
         traces: { enabled: wrangler.observability?.traces?.enabled ?? false },
       },
       placement:
         wrangler.placement?.mode === "smart" ? { mode: "smart" } : undefined,
-      // Scheduled rank checks — src/server.ts `scheduled` handler.
-      crons: wrangler.triggers.crons,
+      // Scheduled rank checks — src/server.ts `scheduled` handler. Cron
+      // triggers share a hard per-ACCOUNT cap of 5 on the Workers free plan
+      // (unrelated workers on this account already use some), raised to
+      // 1,000 on paid. A preview only claims its schedules once
+      // WORKERS_PAID_PLAN=true; until then it deploys with none, same gate
+      // as the CPU limit above.
+      crons: prod || workersPaidPlan ? wrangler.triggers.crons : [],
       env: {
         ...resources,
         ...dataEnv,

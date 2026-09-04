@@ -25,3 +25,6 @@ commit. En cada actualización desde upstream se revisa esta lista y nada más.
 | src/db/schema-parity.test.ts | incluye nes.schema en ambas listas | T9 |
 | src/lib/auth.ts | usa el correo propio (Resend) en vez del proveedor de upstream | T6b |
 | src/serverFunctions/organization.ts | import del correo propio (Resend) | T6b |
+| alchemy.run.ts | reenvía RESEND_API_KEY, RESEND_FROM e INVITE_ONLY_SIGNUP al worker desplegado (T6b y T6 los usan en runtime, pero nunca se habían agregado a `dataEnv`; sin esto el correo y el registro por invitación quedaban mudos en cualquier despliegue) | T7 |
+| alchemy.run.ts | TEMPORAL: quita el límite de CPU de 300s (función de plan pago) en los dos workers (`open-seo` y `open-seo-audit`) salvo en prod o con `WORKERS_PAID_PLAN=true`, porque el plan gratis no lo admite. Revertir (volver a exigirlo siempre) al activar Workers Paid. Detalle en `docs/nes/deuda-tecnica.md` | T7 |
+| alchemy.run.ts | TEMPORAL: no registra los cron triggers del worker `open-seo` (rank checks + GC de OAuth KV) salvo en prod o con `WORKERS_PAID_PLAN=true`, porque el plan gratis tiene un tope de 5 por cuenta compartido con otros proyectos (amja, nespos) y ya estaba en 4. Revertir al activar Workers Paid. Detalle en `docs/nes/deuda-tecnica.md` | T7 |
