@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, notFound } from "@tanstack/react-router";
 import { z } from "zod";
 import { SamChat } from "@/client/features/sam/SamChat";
 
@@ -8,6 +8,11 @@ const samSearchSchema = z.object({
 });
 
 export const Route = createFileRoute("/_project/p/$projectId/sam")({
+  beforeLoad: () => {
+    if (import.meta.env.AI_AGENT_ENABLED === "false") {
+      throw notFound();
+    }
+  },
   validateSearch: samSearchSchema,
   component: SamRoute,
 });

@@ -82,13 +82,15 @@ function SidebarNavLink({
 }
 
 export function Sidebar({ projectId, onNavigate, onClose }: SidebarProps) {
+  // Drop groups left with no items — e.g. "Connect" when AI_AGENT_ENABLED=false.
   const navGroups = [
     ...(projectId ? getProjectNavGroups(projectId) : []),
     connectNavGroup,
-  ];
+  ].filter((group) => group.items.length > 0);
+  const aiAgentEnabled = import.meta.env.AI_AGENT_ENABLED !== "false";
   const navigate = useNavigate();
   const location = useLocation();
-  const onSamRoute = location.pathname.includes("/sam");
+  const onSamRoute = aiAgentEnabled && location.pathname.includes("/sam");
 
   // PostHog-style sidebar tabs: Browse shows the regular nav, Chat shows the
   // SAM chat history. The tab is view state (switching to Browse leaves the
@@ -152,7 +154,7 @@ export function Sidebar({ projectId, onNavigate, onClose }: SidebarProps) {
         />
       </div>
 
-      {projectId ? (
+      {projectId && aiAgentEnabled ? (
         // Same underline tab idiom as the in-page tab strips (e.g. Domain
         // Overview's Top Keywords / Top Pages).
         <div className="px-3 pb-1">

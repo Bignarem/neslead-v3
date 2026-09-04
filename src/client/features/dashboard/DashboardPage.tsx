@@ -304,8 +304,11 @@ export function DashboardPage({ projectId }: { projectId: string }) {
 
   // Array order is the within-bucket order after the data-first sort below:
   // the MCP pitch leads the setup cards.
+  const aiAgentEnabled = import.meta.env.AI_AGENT_ENABLED !== "false";
   const cards = [
-    ...(activation.mcp.firstToolCallAt || activation.mcp.cardDismissedAt
+    ...(!aiAgentEnabled ||
+    activation.mcp.firstToolCallAt ||
+    activation.mcp.cardDismissedAt
       ? []
       : [
           {
@@ -364,7 +367,9 @@ export function DashboardPage({ projectId }: { projectId: string }) {
 
         <WorkspaceMergeBanner />
 
-        <OnboardingChecklist projectId={projectId} activation={activation} />
+        {import.meta.env.ONBOARDING_ENABLED !== "false" ? (
+          <OnboardingChecklist projectId={projectId} activation={activation} />
+        ) : null}
 
         {/* Every card is half width on large screens (only the checklist spans).
           Cards with data render before setup pitches and empty states. */}

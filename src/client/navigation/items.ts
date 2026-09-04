@@ -82,9 +82,10 @@ const aiNavItem = linkOptions({
 });
 
 // Always-visible sidebar group (not project-scoped, unlike the groups below).
+// Empty when AI_AGENT_ENABLED=false — Sidebar drops groups with no items.
 export const connectNavGroup = {
   label: "Connect",
-  items: [aiNavItem],
+  items: import.meta.env.AI_AGENT_ENABLED === "false" ? [] : [aiNavItem],
 };
 
 function getProjectNavItems(projectId: string) {

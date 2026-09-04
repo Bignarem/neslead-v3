@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowUpRight, ShieldAlert } from "lucide-react";
 import { getAuthMode, isHostedClientAuthMode } from "@/lib/auth-mode";
 import { captureClientEvent } from "@/client/lib/posthog";
@@ -39,6 +39,11 @@ mkdir -p ~/.claude/skills
 cp -R open-seo/.agents/skills/* ~/.claude/skills/`;
 
 export const Route = createFileRoute("/_app/ai")({
+  beforeLoad: () => {
+    if (import.meta.env.AI_AGENT_ENABLED === "false") {
+      throw notFound();
+    }
+  },
   component: AiPage,
 });
 

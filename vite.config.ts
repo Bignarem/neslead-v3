@@ -25,6 +25,7 @@ export default defineConfig(({ mode }) => {
     envPrefix: [
       "VITE_",
       "AUTH_MODE",
+      "AI_AGENT_ENABLED",
       "BYPASS_EMAIL_VERIFICATION",
       "ONBOARDING_ENABLED",
       "POSTHOG_PUBLIC_KEY",

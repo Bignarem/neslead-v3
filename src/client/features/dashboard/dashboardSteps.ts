@@ -1,12 +1,20 @@
 import type { DashboardActivation } from "@/server/features/dashboard/services/DashboardService";
 import type { DashboardHeroStep } from "@/types/schemas/dashboard";
 
-export const STEP_ORDER: DashboardHeroStep[] = [
-  "domain",
-  "mcp",
-  "gsc",
-  "competitor",
-];
+// "mcp" drops out entirely when AI_AGENT_ENABLED=false — its copy names the
+// agent feature by name, so marking the step merely "done" isn't enough; it
+// must never be reachable by paging through the checklist.
+export function getStepOrder(
+  aiAgentEnabled: string | undefined,
+): DashboardHeroStep[] {
+  return aiAgentEnabled === "false"
+    ? ["domain", "gsc", "competitor"]
+    : ["domain", "mcp", "gsc", "competitor"];
+}
+
+export const STEP_ORDER: DashboardHeroStep[] = getStepOrder(
+  import.meta.env.AI_AGENT_ENABLED,
+);
 
 // A step is "done" when the underlying product state exists, regardless of
 // how it got there. The MCP hero step completes at authorization (the card
