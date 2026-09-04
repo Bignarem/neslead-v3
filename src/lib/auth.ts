@@ -334,7 +334,7 @@ function getHostedSecret() {
   return secret;
 }
 
-function getSocialProviders() {
+export function getSocialProviders() {
   // Google social login is hosted-only. Self-hosted builds the auth instance
   // solely for Search Console token ops, which use the genericOAuth provider
   // (createBaseAuthConfig) with its own creds — so it must NOT require the
@@ -344,21 +344,20 @@ function getSocialProviders() {
     return {};
   }
 
-  return {
-    google: getGoogleSocialProviderConfig(),
-  };
+  const google = getGoogleSocialProviderConfig();
+  return google ? { google } : {};
 }
 
+// Google login is not part of the sold hosted-mode design (email + password,
+// verification, orgs, members, invitations, API keys, Turnstile) — it's an
+// optional extra some agency accounts may still want. Missing credentials
+// just omit the provider instead of failing hosted mode altogether.
 function getGoogleSocialProviderConfig() {
   const googleClientId = env.GOOGLE_CLIENT_ID?.trim();
   const googleClientSecret = env.GOOGLE_CLIENT_SECRET?.trim();
 
-  if (!googleClientId) {
-    throw new Error("GOOGLE_CLIENT_ID is required in hosted mode");
-  }
-
-  if (!googleClientSecret) {
-    throw new Error("GOOGLE_CLIENT_SECRET is required in hosted mode");
+  if (!googleClientId || !googleClientSecret) {
+    return undefined;
   }
 
   return {
@@ -383,11 +382,14 @@ function hasHostedAuthEmailConfig() {
   return typeof value === "string" && value.trim() !== "";
 }
 
+// Google is deliberately absent from these checks: it's optional (see
+// getGoogleSocialProviderConfig above), not part of what hosted mode
+// requires to run. Turnstile and email stay required — don't add Google
+// back here without also reopening that product decision.
 export function hasHostedAuthConfig() {
   try {
     getHostedBaseUrl();
     getHostedSecret();
-    getGoogleSocialProviderConfig();
     return (
       hasHostedTurnstileConfig(env) &&
       (Reflect.get(env, "BYPASS_EMAIL_VERIFICATION") === "true" ||

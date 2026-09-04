@@ -40,3 +40,31 @@ que no sea prod que deba tener el límite y los crons), luego redesplegar esa et
 adelante se decide que todas las etapas correrán siempre sobre plan pago, se puede simplificar
 `alchemy.run.ts` quitando el flag y volviendo a la condición original (solo excluir
 `cloudflare_access`) — en ese punto esta entrada se borra.
+
+## Login social de Google vuelto opcional en modo hosted (T7)
+
+**Qué se cambió:** en `src/lib/auth.ts`, `getGoogleSocialProviderConfig()` devuelve
+`undefined` (en vez de lanzar) cuando faltan `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET`;
+`getSocialProviders()` omite la clave `google` del objeto de proveedores cuando eso pasa; y
+`hasHostedAuthConfig()` ya no exige Google como parte del arranque. Turnstile y el correo
+propio siguen siendo obligatorios, sin tocar.
+
+**Por qué:** el código de upstream exigía Google de forma incondicional en modo `hosted`, sin
+bandera para desactivarlo. El diseño aprobado del modo hosted es "correo y contraseña,
+verificación, organizaciones, miembros, invitaciones, claves de API, Turnstile" — no menciona
+Google en ningún lado. Los clientes son negocios dominicanos que entran con correo y
+contraseña; el login social no está vendido ni prometido, y exigirlo hubiera obligado a pasar
+por la consola de Google Cloud y su verificación de marca solo para poder desplegar una etapa
+de staging.
+
+**No es deuda en el sentido de "hay que deshacerlo"** — es la decisión de producto correcta,
+tomada explícitamente. Se documenta aquí para que quede claro que la ausencia de Google no es
+un descuido si alguien lo nota más adelante.
+
+**Cómo reactivar el login con Google** (si algún día se decide venderlo): crear un cliente
+OAuth en Google Cloud Console (tipo "Web application", URI de redirección
+`https://<host-de-la-etapa>/api/auth/callback/google`) y agregar `GOOGLE_CLIENT_ID` y
+`GOOGLE_CLIENT_SECRET` al archivo de entorno de esa etapa. No hace falta tocar
+`src/lib/auth.ts`: en cuanto las dos variables estén presentes, `getGoogleSocialProviderConfig()`
+vuelve a devolver la configuración completa y el proveedor aparece de nuevo, igual que antes
+de este cambio.
