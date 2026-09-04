@@ -33,7 +33,10 @@ async function create(input: {
     source: input.source ?? "manual",
     notes: input.notes ?? null,
   });
-  await LeadRepository.addEvent({ leadId: lead.id, kind: "estado", body: "nuevo" });
+  await LeadRepository.addEvent(
+    { leadId: lead.id, kind: "estado", body: "nuevo" },
+    input.projectId,
+  );
   return lead;
 }
 
@@ -54,7 +57,10 @@ async function cambiarEstado(input: {
     input.amountUsd,
   );
   if (!updated) throw new AppError("NOT_FOUND", "Lead no encontrado.");
-  await LeadRepository.addEvent({ leadId: lead.id, kind: "estado", body: input.status });
+  await LeadRepository.addEvent(
+    { leadId: lead.id, kind: "estado", body: input.status },
+    input.projectId,
+  );
   return updated;
 }
 

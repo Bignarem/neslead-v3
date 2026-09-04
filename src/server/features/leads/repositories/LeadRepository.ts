@@ -1,6 +1,7 @@
 import { and, desc, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { nesLeadEvents, nesLeads } from "@/db/schema";
+import { AppError } from "@/server/lib/errors";
 
 export type Lead = typeof nesLeads.$inferSelect;
 export type LeadEvent = typeof nesLeadEvents.$inferSelect;
@@ -56,18 +57,27 @@ async function updateStatus(
   return row ?? null;
 }
 
-// Escribe sobre nes_lead_events, que no tiene projectId propio: el llamador
-// (LeadService) siempre resuelve el lead vía getForProject antes de pasar su
-// id aquí, así que el aislamiento ya quedó probado en ese paso previo.
-async function addEvent(values: typeof nesLeadEvents.$inferInsert): Promise<LeadEvent> {
-  const [row] = await db.insert(nesLeadEvents).values(values).returning();
+// nes_lead_events no tiene projectId propio (solo leadId), así que el
+// aislamiento no puede vivir solo en el criterio del llamador: se comprueba
+// aquí, con la misma consulta que getForProject, antes de insertar. Un
+// leadId de otro proyecto no escribe nada.
+async function addEvent(
+  values: typeof nesLeadEvents.$inferInsert,
+  projectId: string,
+): Promise<LeadEvent> {
+  const lead = await getForProject(values.leadId, projectId);
+  if (!lead) throw new AppError("NOT_FOUND", "Lead no encontrado.");
+  const now = new Date().toISOString();
+  const [row] = await db
+    .insert(nesLeadEvents)
+    .values({ createdAt: now, ...values })
+    .returning();
   if (!row) throw new Error("Failed to insert nes_lead_event");
   return row;
 }
 
-// A diferencia de addEvent, este método sí queda expuesto para lecturas
-// futuras (bandeja, ruta pública del evento) fuera del flujo de LeadService,
-// así que el filtro por proyecto va en el propio SQL, no en el llamador.
+// Mismo criterio que addEvent, para la lectura: el filtro por proyecto va en
+// el propio SQL (join contra nes_leads), no en el llamador.
 async function listEvents(leadId: string, projectId: string): Promise<LeadEvent[]> {
   const rows = await db
     .select({ event: nesLeadEvents })
