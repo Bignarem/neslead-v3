@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { createLead } from "@/serverFunctions/leads";
-import { getStandardErrorMessage } from "@/client/lib/error-messages";
+import { getLeadsErrorMessage } from "@/client/features/leads/mensajes";
 
 export function NuevoLeadForm({ projectId }: { projectId: string }) {
   const queryClient = useQueryClient();
@@ -28,8 +28,7 @@ export function NuevoLeadForm({ projectId }: { projectId: string }) {
       setEmail("");
       void queryClient.invalidateQueries({ queryKey: ["leads", projectId] });
     },
-    onError: (error) =>
-      toast.error(getStandardErrorMessage(error, "No se pudo añadir el lead.")),
+    onError: (error) => toast.error(getLeadsErrorMessage(error)),
   });
 
   const canSubmit = Boolean(name.trim() || phone.trim() || email.trim());

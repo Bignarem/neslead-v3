@@ -2,16 +2,13 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Users } from "lucide-react";
 import { changeLeadStatus, listLeads } from "@/serverFunctions/leads";
-import { getStandardErrorMessage } from "@/client/lib/error-messages";
+import { changeLeadStatusInputSchema } from "@/types/schemas/leads";
+import { getLeadsErrorMessage } from "@/client/features/leads/mensajes";
 import { NuevoLeadForm } from "@/client/features/leads/NuevoLeadForm";
 
-const ESTADOS = [
-  "nuevo",
-  "contactado",
-  "cotizado",
-  "ganado",
-  "perdido",
-] as const;
+// Derivado del esquema zod (fuente única junto con LeadService.ESTADOS en el
+// servidor) para que un estado nuevo no haya que añadirlo también aquí.
+const ESTADOS = changeLeadStatusInputSchema.shape.status.options;
 type Estado = (typeof ESTADOS)[number];
 
 const ESTADO_ETIQUETA: Record<Estado, string> = {
@@ -45,10 +42,7 @@ export function LeadsPage({ projectId }: { projectId: string }) {
       changeLeadStatus({ data: { projectId, ...input } }),
     onSuccess: () =>
       void queryClient.invalidateQueries({ queryKey: ["leads", projectId] }),
-    onError: (error) =>
-      toast.error(
-        getStandardErrorMessage(error, "No se pudo cambiar el estado."),
-      ),
+    onError: (error) => toast.error(getLeadsErrorMessage(error)),
   });
 
   const leads = leadsQuery.data ?? [];
@@ -80,10 +74,7 @@ export function LeadsPage({ projectId }: { projectId: string }) {
               {leadsQuery.isError ? (
                 <div className="p-5">
                   <div className="alert alert-error">
-                    {getStandardErrorMessage(
-                      leadsQuery.error,
-                      "No se pudieron cargar los leads.",
-                    )}
+                    {getLeadsErrorMessage(leadsQuery.error)}
                   </div>
                 </div>
               ) : leadsQuery.isPending ? (
@@ -149,7 +140,9 @@ export function LeadsPage({ projectId }: { projectId: string }) {
                               ))}
                             </select>
                           </td>
-                          <td>{lead.createdAt.slice(0, 10)}</td>
+                          <td>
+                            {new Date(lead.createdAt).toLocaleDateString()}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
