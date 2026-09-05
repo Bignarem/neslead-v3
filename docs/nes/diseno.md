@@ -93,6 +93,28 @@ densidad a Dashboard/Lighthouse Issues que a Domain/Backlinks/Keyword Research. 
 No hace falta un tercero: ninguna pantalla propia actual necesita algo entre estos dos, y
 agregar uno más repite el problema que esto viene a resolver.
 
+### Cómo se resuelve una pantalla en duda
+
+Cuando una pantalla nueva no caiga claramente de un lado, **no se decide a ojo ni se copia
+la de al lado**. Se sigue este procedimiento, que es el que resolvió el caso de Leads:
+
+1. **Aplica el criterio primero.** ¿Tiene barra de filtros, búsqueda, ordenamiento o
+   paginación? ¿Pasa de seis columnas? Si la respuesta es sí, es `max-w-7xl`. Si es no a
+   todo, es `max-w-5xl`. La mayoría de las pantallas se resuelven aquí y no hace falta
+   seguir.
+2. **Si sigue en duda, se mide, no se opina.** Maqueta una réplica con las clases reales y
+   el contenido real —no un ejemplo inventado— y renderízala en los dos anchos, a 1280 y a
+   1024 píxeles.
+3. **Compara una cosa concreta:** el espacio vacío entre columnas. Si a `7xl` quedan huecos
+   de cientos de píxeles porque no hay contenido que reclame ese ancho, la pantalla es
+   `5xl`.
+4. **Escribe el resultado aquí**, en dos líneas, con la pantalla y el motivo. Así la
+   siguiente duda parecida ya viene resuelta.
+
+**Esto no es una puerta de escape.** Solo vale con el paso 2 hecho y anotado. "Se ve mejor
+así" no es una razón; "a `7xl` la tabla de cinco columnas deja huecos de 300px" sí lo es,
+porque cualquiera puede repetir la comprobación y llegar al mismo sitio.
+
 ## Esqueleto canónico de una pantalla
 
 ```tsx
