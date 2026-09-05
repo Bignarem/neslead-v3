@@ -1,8 +1,7 @@
 import * as React from "react";
 import { Link } from "@tanstack/react-router";
-import { AlertTriangle, ExternalLink } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import { Sidebar } from "@/client/components/Sidebar";
-import { dataforseoHelpLinkOptions } from "@/client/navigation/items";
 
 function SeoApiStatusBanners({
   shouldShowSeoApiWarning,
@@ -19,15 +18,11 @@ function SeoApiStatusBanners({
             <div className="alert alert-warning">
               <AlertTriangle className="size-4 shrink-0" />
               <span className="text-sm">
-                Setup needed: add your DataForSEO API key to use neslead
-                features. See the quick steps on the{" "}
-                <Link
-                  {...dataforseoHelpLinkOptions}
-                  className="link link-primary font-medium"
-                >
-                  help page
-                </Link>
-                .
+                Falta completar la configuración de la cuenta.{" "}
+                <Link to="/support" className="link link-primary font-medium">
+                  Escríbenos
+                </Link>{" "}
+                y lo resolvemos.
               </span>
             </div>
           </div>
@@ -40,13 +35,10 @@ function SeoApiStatusBanners({
             <div className="alert alert-info">
               <AlertTriangle className="size-4 shrink-0" />
               <span className="text-sm">
-                We could not verify your DataForSEO setup. If features are not
-                working, check the setup steps on the{" "}
-                <Link
-                  {...dataforseoHelpLinkOptions}
-                  className="link link-primary font-medium"
-                >
-                  help page
+                No pudimos comprobar la configuración de la cuenta. Si algo no
+                funciona,{" "}
+                <Link to="/support" className="link link-primary font-medium">
+                  escríbenos
                 </Link>
                 .
               </span>
@@ -113,29 +105,24 @@ const MissingSeoSetupModal = React.forwardRef<
               id="dataforseo-setup-title"
               className="text-lg font-semibold text-base-content"
             >
-              One quick setup step
+              Falta completar la configuración de la cuenta
             </h2>
             <p
               id="dataforseo-setup-description"
               className="text-sm text-base-content/75"
             >
-              Add your DataForSEO API key to start using neslead.
+              Escríbenos y lo resolvemos lo antes posible.
             </p>
           </div>
         </div>
 
         <div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-          <button type="button" className="btn btn-ghost" onClick={onClose}>
-            Dismiss
-          </button>
-          <Link
-            {...dataforseoHelpLinkOptions}
-            className="btn btn-primary"
-            onClick={onClose}
-          >
-            Open setup guide
-            <ExternalLink className="size-4" />
+          <Link to="/support" className="btn btn-ghost" onClick={onClose}>
+            Ir a soporte
           </Link>
+          <button type="button" className="btn btn-primary" onClick={onClose}>
+            Entendido
+          </button>
         </div>
       </div>
     </div>
