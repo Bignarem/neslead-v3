@@ -38,7 +38,7 @@ describe("coded error messages (CODE: detail)", () => {
   it("keeps bare codes mapping to the standard copy", () => {
     const bare = new Error("AUTH_CONFIG_MISSING");
     expect(getErrorCode(bare)).toBe("AUTH_CONFIG_MISSING");
-    expect(getStandardErrorMessage(bare)).toContain("not configured");
+    expect(getStandardErrorMessage(bare)).toContain("no está configurada");
   });
 
   it("does not treat arbitrary colon messages as coded", () => {

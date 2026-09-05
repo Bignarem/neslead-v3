@@ -20,7 +20,7 @@ export function AuthConfigErrorCard({
       <div className="card-body gap-4">
         <h2 className="card-title gap-2">
           <ShieldAlert className="size-5 text-error" />
-          Authentication setup required
+          Falta configurar la autenticación
         </h2>
 
         <div className="alert alert-error">
@@ -29,24 +29,24 @@ export function AuthConfigErrorCard({
 
         {isHostedMode ? (
           <p className="text-sm text-base-content/70">
-            Hosted mode requires{" "}
+            El modo alojado necesita{" "}
             <code className="mx-1">BETTER_AUTH_SECRET</code>
-            (32+ characters), <code className="mx-1">BETTER_AUTH_URL</code>, and
-            Google OAuth credentials on the deployment.
+            (32 o más caracteres), <code className="mx-1">BETTER_AUTH_URL</code>
+            , y credenciales de Google OAuth en el despliegue.
           </p>
         ) : (
           <p className="text-sm text-base-content/70">
-            Cloudflare Access mode requires
-            <code className="mx-1">TEAM_DOMAIN</code> (a full https URL) and
-            <code className="mx-1">POLICY_AUD</code> set on the deployment, with
-            an Access application protecting this hostname.
+            El modo Cloudflare Access necesita
+            <code className="mx-1">TEAM_DOMAIN</code> (una URL https completa) y
+            <code className="mx-1">POLICY_AUD</code> en el despliegue, con una
+            aplicación de Access protegiendo este dominio.
           </p>
         )}
 
         <div className="card-actions justify-end">
           {onRetry ? (
             <button className="btn btn-ghost btn-sm" onClick={onRetry}>
-              Try Again
+              Reintentar
             </button>
           ) : null}
           <a
@@ -55,7 +55,7 @@ export function AuthConfigErrorCard({
             target="_blank"
             rel="noreferrer"
           >
-            Open Setup Guide
+            Abrir guía de configuración
           </a>
         </div>
       </div>

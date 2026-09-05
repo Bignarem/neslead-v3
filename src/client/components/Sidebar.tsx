@@ -266,7 +266,7 @@ function SidebarFooter({ onNavigate }: { onNavigate?: () => void }) {
     <div className="shrink-0 border-t border-base-300 px-2 py-2 pb-safe">
       <SidebarNavLink
         icon={CircleHelp}
-        label="Help & Community"
+        label="Soporte"
         onNavigate={onNavigate}
         linkProps={{ to: "/support" }}
       />

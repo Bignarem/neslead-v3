@@ -13,21 +13,21 @@ function DataforseoApiKeyHelpPage() {
         <div className="card bg-base-100 border border-base-300">
           <div className="card-body gap-3">
             <h1 className="text-2xl font-semibold">
-              Set up your DataForSEO API key
+              Configura tu clave de API de DataForSEO
             </h1>
             <p className="text-sm text-base-content/70">
-              OpenSEO needs the <code>DATAFORSEO_API_KEY</code> secret before
-              keyword, domain, and SEO data workflows can run.
+              Hace falta el secreto <code>DATAFORSEO_API_KEY</code> antes de que
+              funcionen las búsquedas de palabras clave, dominios y datos SEO.
             </p>
           </div>
         </div>
 
         <div className="card bg-base-100 border border-base-300">
           <div className="card-body gap-4">
-            <h2 className="card-title text-base">Steps</h2>
+            <h2 className="card-title text-base">Pasos</h2>
             <ol className="list-decimal pl-5 text-sm space-y-3 text-base-content/80">
               <li>
-                Go to{" "}
+                Ve a{" "}
                 <a
                   className="link link-primary"
                   href={DATAFORSEO_API_ACCESS_URL}
@@ -36,18 +36,18 @@ function DataforseoApiKeyHelpPage() {
                 >
                   DataForSEO API Access
                 </a>{" "}
-                and request API credentials by email.
+                y solicita las credenciales de API por correo.
               </li>
               <li>
-                Base64 encode your DataForSEO login and API password in this
-                format:
+                Codifica en base64 tu usuario y contraseña de API de DataForSEO
+                con este formato:
                 <pre className="mt-2 p-3 rounded bg-base-200 border border-base-300 overflow-x-auto text-xs">
                   <code>printf '%s' 'YOUR_LOGIN:YOUR_PASSWORD' | base64</code>
                 </pre>
               </li>
               <li>
-                Save the output as the <code>DATAFORSEO_API_KEY</code> secret in
-                your environment.
+                Guarda el resultado como el secreto{" "}
+                <code>DATAFORSEO_API_KEY</code> en tu entorno.
               </li>
             </ol>
           </div>
@@ -56,35 +56,36 @@ function DataforseoApiKeyHelpPage() {
         <div className="card bg-base-100 border border-base-300">
           <div className="card-body gap-2 text-sm text-base-content/75">
             <h2 className="card-title text-base">
-              Cloudflare Workers (Dashboard UI)
+              Cloudflare Workers (panel web)
             </h2>
             <ol className="list-decimal pl-5 space-y-2 text-sm text-base-content/80">
               <li>
-                In Cloudflare, go to <code>Compute</code> -&gt;{" "}
-                <code>Workers &amp; Pages</code>
-                and open your OpenSEO Worker.
+                En Cloudflare, ve a <code>Compute</code> -&gt;{" "}
+                <code>Workers &amp; Pages</code> y abre tu Worker.
               </li>
               <li>
-                Open <code>Settings</code>.
+                Abre <code>Settings</code>.
               </li>
               <li>
-                Go to <code>Variables &amp; Secrets</code> and add a new secret
-                named
+                Ve a <code>Variables &amp; Secrets</code> y agrega un secreto
+                nuevo llamado
                 <code className="mx-1">DATAFORSEO_API_KEY</code>.
               </li>
               <li>
-                Paste the base64 value from the terminal command above and save.
+                Pega el valor en base64 del comando de la terminal de arriba y
+                guarda.
               </li>
             </ol>
 
             <div className="divider my-1" />
 
-            <p>Or set the same secret from your terminal with:</p>
+            <p>O configura el mismo secreto desde tu terminal con:</p>
             <pre className="p-3 rounded bg-base-200 border border-base-300 overflow-x-auto text-xs">
               <code>npx wrangler secret put DATAFORSEO_API_KEY</code>
             </pre>
             <p>
-              Use the base64 value of <code>login:password</code> when prompted.
+              Usa el valor en base64 de <code>login:password</code> cuando se te
+              pida.
             </p>
           </div>
         </div>

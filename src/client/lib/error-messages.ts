@@ -4,7 +4,7 @@ import { isErrorCode, type ErrorCode } from "@/shared/error-codes";
 const STANDARD_MESSAGES: Record<ErrorCode, string> = {
   UNAUTHENTICATED: "Please sign in and try again.",
   AUTH_CONFIG_MISSING:
-    "OpenSEO auth is not configured. Follow the README setup steps for Cloudflare Access.",
+    "La autenticación no está configurada. Sigue los pasos de configuración de Cloudflare Access del README.",
   PAYMENT_REQUIRED:
     "An active hosted subscription is required before you can use OpenSEO.",
   INSUFFICIENT_CREDITS:
