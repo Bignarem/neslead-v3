@@ -58,8 +58,11 @@ rounded-xl bg-base-200` con un ícono Lucide `size-5 text-base-content/40`, tít
 
 - **Cuenta (`_app/*`: Settings, Projects, Billing, Support, AI & MCP, Help):** anchos entre
   `max-w-xl` y `max-w-4xl`, sin un valor dominante claro (`max-w-2xl` y `max-w-3xl` empatan,
-  3 pantallas cada uno). Es la familia a usar cuando haga falta una pantalla propia de tipo
-  "ajustes" o "formulario de una sola cosa" — ver el ancho angosto más abajo.
+  3 pantallas cada una). El empate no es al azar: `max-w-3xl` cae siempre en lectura larga
+  (AI & MCP, las dos páginas de ayuda), `max-w-2xl` en listado-con-acciones y formularios
+  (Projects, Billing, Project Settings). Queda anotado para cuando haga falta una primera
+  pantalla propia de tipo "ajustes" fuera del área de proyecto; no se adopta como estándar
+  propio hoy porque ninguna pantalla propia vive ahí todavía.
 - **Autenticación y standalone** (`_auth.*`, `_authenticated.*`, `forgot-password`,
   `reset-password`, `verify-email`, `accept-invitation`, `auth-error`, `privacidad`,
   `terminos`): tarjeta centrada angosta (`max-w-xs` a `max-w-md`), sin sidebar. Familia
@@ -68,23 +71,32 @@ rounded-xl bg-base-200` con un ícono Lucide `size-5 text-base-content/40`, tít
   `settings/context.tsx`, `settings/integrations.tsx`, `settings/organization.tsx`, etc.) no
   repiten ancho ni relleno: los heredan del layout padre vía `<Outlet />`. No se miden aparte.
 
-## Los dos anchos
+## Los dos anchos (área de proyecto, donde vive Leads)
 
-1. **`max-w-7xl` — contenido que se explora** (tablas, listados, resultados de búsqueda).
-   Es el valor que ya usa la mayoría de las pantallas del área de proyecto. Leads es un
-   listado de contactos: entra aquí.
-2. **`max-w-2xl` — contenido que se lee o se rellena** (un formulario de una sola cosa,
-   ajustes, texto corto). Es el ancho más repetido en la familia de cuenta. No hay hoy
-   ninguna pantalla propia de este tipo; se deja anotado para cuando aparezca (p. ej. un
-   futuro ajuste de canales o de plan).
+1. **`max-w-7xl` — contenido que se explora y llena el ancho** (tabla con muchas columnas
+   y/o su propia barra de filtros o búsqueda). Es la moda del área de proyecto (7/12) y el
+   valor por defecto para la próxima pantalla propia de este tipo.
+2. **`max-w-5xl` — contenido más ligero** (una tabla corta sin barra de filtros, tarjetas,
+   un resultado). Segundo valor más repetido (4/12: Dashboard, Site Audit, Lighthouse
+   Issues).
+
+**Leads usa `max-w-5xl`, y se verificó, no se asumió.** Por la letra del criterio de arriba
+("listado" cae en "se explora"), el primer intento de esta tarea fue mover Leads a
+`max-w-7xl`. Se maquetó una réplica exacta de las clases en ambos anchos y se comparó: a
+1280px (`7xl`) las cinco columnas de la tabla (Nombre, Contacto, Origen, Estado, Recibido)
+dejan huecos vacíos de varios cientos de píxeles entre sí porque no hay barra de filtros ni
+columnas adicionales que reclamen ese espacio; a 1024px (`5xl`) la misma tabla se ve
+intencional. Leads no tiene filtros, ni ordenamiento, ni paginación — es más parecida en
+densidad a Dashboard/Lighthouse Issues que a Domain/Backlinks/Keyword Research. Se queda en
+`max-w-5xl` por eso, no porque ya viniera así.
 
 No hace falta un tercero: ninguna pantalla propia actual necesita algo entre estos dos, y
 agregar uno más repite el problema que esto viene a resolver.
 
-## Esqueleto canónico de una pantalla (ancho, la mayoría de los casos)
+## Esqueleto canónico de una pantalla
 
 ```tsx
-<div className="px-4 py-4 pb-24 md:px-6 md:py-6 md:pb-8 overflow-auto">
+<div className="px-4 py-4 pb-24 md:px-6 md:py-6 md:pb-8">
   <div className="mx-auto max-w-7xl space-y-4">
     <div>
       <h1 className="text-2xl font-semibold">Título de la pantalla</h1>
@@ -98,10 +110,11 @@ agregar uno más repite el problema que esto viene a resolver.
 </div>
 ```
 
-Para una pantalla angosta (leer/rellenar), es el mismo esqueleto cambiando solo
-`max-w-7xl` por `max-w-2xl`. El `overflow-auto` es opcional: solo hace falta si la pantalla
-puede crecer más que el viewport y necesita su propio scroll (la mayoría lo usa; Dashboard es
-la excepción porque su contenido ya cabe).
+Cambia `max-w-7xl` por `max-w-5xl` cuando el contenido no tiene barra de filtros ni columnas
+suficientes para llenar el ancho (así queda Leads: es el contenedor de `LeadsPage.tsx` tal
+cual, con `max-w-5xl`). Agrega `overflow-auto` al div exterior si la pantalla puede crecer
+más que el viewport y necesita su propio scroll (la mayoría de las pantallas de exploración
+lo usa); si no, déjalo fuera, como en Leads.
 
 ## Patrón de tabla
 
@@ -148,9 +161,10 @@ Formulario corto embebido en una tarjeta (como "Añadir lead"):
 </div>
 ```
 
-Un formulario que es la pantalla entera (ancho angosto, `max-w-2xl`) no va en tarjeta: los
-campos van directo dentro del contenedor `space-y-4`/`space-y-6`, como en las pantallas de
-ajustes de cuenta.
+Un formulario que es la pantalla entera (no uno embebido en una tarjeta dentro de una
+pantalla más grande) no va en tarjeta: los campos van directo dentro del contenedor
+`space-y-4`, como en las pantallas de ajustes de cuenta. Ese caso no existe todavía entre
+las pantallas propias; cuando aparezca, usa `max-w-2xl` (ver "Otras familias" arriba).
 
 ## Estado vacío
 
