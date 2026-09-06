@@ -6,7 +6,7 @@ const STANDARD_MESSAGES: Record<ErrorCode, string> = {
   AUTH_CONFIG_MISSING:
     "La autenticación no está configurada. Sigue los pasos de configuración de Cloudflare Access del README.",
   PAYMENT_REQUIRED:
-    "An active hosted subscription is required before you can use OpenSEO.",
+    "An active hosted subscription is required before you can use this.",
   INSUFFICIENT_CREDITS:
     "You've run out of credits. Add more credits or upgrade your plan to continue.",
   FORBIDDEN: "You do not have access to this resource.",
@@ -19,11 +19,11 @@ const STANDARD_MESSAGES: Record<ErrorCode, string> = {
   VALIDATION_ERROR: "Please check your input and try again.",
   CRAWL_TARGET_BLOCKED: "This crawl target is blocked by security policy.",
   BACKLINKS_BILLING_ISSUE:
-    "The connected DataForSEO account has a billing or balance issue.",
+    "The connected data provider account has a billing or balance issue.",
   AI_SEARCH_BILLING_ISSUE:
-    "The connected DataForSEO account has a billing or balance issue.",
+    "The connected data provider account has a billing or balance issue.",
   DATAFORSEO_AUTH_FAILED:
-    "DataForSEO rejected the API key. Check that DATAFORSEO_API_KEY is the base64 of your DataForSEO login:password.",
+    "The data provider rejected the API key. Check that DATAFORSEO_API_KEY is the base64 of the data provider login:password.",
   RATE_LIMITED: "Too many requests. Please wait and try again.",
   UPSTREAM_UNAVAILABLE:
     "The data provider is temporarily unavailable. Please retry in a moment.",

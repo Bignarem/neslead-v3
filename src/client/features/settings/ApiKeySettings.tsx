@@ -19,7 +19,7 @@ export function ApiKeySettings() {
 
   const mcpUrl =
     typeof window === "undefined"
-      ? "https://app.openseo.so/mcp"
+      ? "https://app.neslead.com/mcp"
       : `${window.location.origin}/mcp`;
 
   const apiKeysQuery = useQuery({
@@ -92,18 +92,7 @@ export function ApiKeySettings() {
             Authenticate MCP clients when OAuth doesn't work
           </p>
           <p className="mt-1 text-sm text-base-content/60">
-            Use this for remote agents like Hermes where the normal login flow
-            doesn't work.
-          </p>
-          <p className="mt-1 text-sm">
-            <a
-              className="link link-primary"
-              href="https://openseo.so/docs/mcp"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Setup guide
-            </a>
+            Use this for remote agents where the normal login flow doesn't work.
           </p>
         </div>
         <button

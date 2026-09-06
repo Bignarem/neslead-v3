@@ -239,7 +239,7 @@ export function buildTopPagesColumns({
         <SortableHeader
           column={column}
           label="Source vol."
-          helpText="Estimated monthly prompt demand DataForSEO reports for this cited source, across prompts where the searched brand or domain appears."
+          helpText="Estimated monthly prompt demand the data provider reports for this cited source, across prompts where the searched brand or domain appears."
           align="right"
         />
       ),

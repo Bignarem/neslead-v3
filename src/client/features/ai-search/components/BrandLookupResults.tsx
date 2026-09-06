@@ -206,7 +206,7 @@ function PlatformStatRow({
         {row.platform === "chat_gpt" ? (
           <span
             className="tooltip z-20 inline-flex"
-            data-tip="DataForSEO indexes ChatGPT mentions for US English only — country selection is not available for this platform."
+            data-tip="The data provider indexes ChatGPT mentions for US English only — country selection is not available for this platform."
           >
             <Info className="size-3 text-base-content/40" />
           </span>

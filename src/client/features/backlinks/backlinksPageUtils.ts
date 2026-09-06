@@ -32,7 +32,7 @@ export function buildSummaryStats(data: BacklinksOverviewData | undefined) {
     {
       label: "Rank",
       value: formatNumber(data.summary.rank),
-      description: "DataForSEO's 0-100 authority score.",
+      description: "The data provider's 0-100 authority score.",
     },
     {
       label: "Backlink Spam Score",

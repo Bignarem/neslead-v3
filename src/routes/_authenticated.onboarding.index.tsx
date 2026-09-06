@@ -1,5 +1,10 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  notFound,
+  redirect,
+  useNavigate,
+} from "@tanstack/react-router";
 import { useState } from "react";
 import { OnboardingAccountMenu } from "@/client/features/onboarding/OnboardingAccountMenu";
 import { PostSignupOnboarding } from "@/client/features/onboarding/PostSignupOnboarding";
@@ -33,7 +38,15 @@ export const Route = createFileRoute("/_authenticated/onboarding/")({
   // Send users who already finished onboarding home before rendering. Running
   // this in beforeLoad (not a component effect) means it can't race with the
   // navigation we trigger after the final step.
+  //
+  // NES: ONBOARDING_ENABLED=false also 404s this route directly. Before this
+  // gate, only the auto-redirect into onboarding checked the flag — the route
+  // itself stayed reachable by URL, the same shape of gap that let branded
+  // "isHosted" screens through in task 4c. See docs/nes/marca.md.
   beforeLoad: async () => {
+    if (import.meta.env.ONBOARDING_ENABLED === "false") {
+      throw notFound();
+    }
     const data = await queryClient.ensureQueryData(
       onboardingAnswersQueryOptions(),
     );

@@ -16,9 +16,9 @@ function OpenrouterApiKeyHelpPage() {
               Set up your OpenRouter API key
             </h1>
             <p className="text-sm text-base-content/70">
-              OpenSEO needs the <code>OPENROUTER_API_KEY</code> secret before AI
-              features like SAM, the in-app SEO agent, can run. It is optional —
-              everything else in OpenSEO works without it.
+              This app needs the <code>OPENROUTER_API_KEY</code> secret before
+              AI features like SAM, the in-app SEO agent, can run. It is
+              optional — everything else works without it.
             </p>
           </div>
         </div>
@@ -37,7 +37,7 @@ function OpenrouterApiKeyHelpPage() {
                 >
                   openrouter.ai
                 </a>{" "}
-                and add credits (pay-as-you-go, like DataForSEO).
+                and add credits (pay-as-you-go, like most usage-based APIs).
               </li>
               <li>
                 Go to{" "}
@@ -64,7 +64,7 @@ function OpenrouterApiKeyHelpPage() {
                   </li>
                 </ul>
               </li>
-              <li>Restart OpenSEO.</li>
+              <li>Restart the app.</li>
             </ol>
           </div>
         </div>
@@ -78,7 +78,7 @@ function OpenrouterApiKeyHelpPage() {
               <li>
                 In Cloudflare, go to <code>Compute</code> -&gt;{" "}
                 <code>Workers &amp; Pages</code>
-                and open your OpenSEO Worker.
+                and open the app's Worker.
               </li>
               <li>
                 Open <code>Settings</code>.

@@ -24,6 +24,10 @@ const THEME_OPTIONS: {
 
 function PersonalSettings() {
   const isHosted = isHostedClientAuthMode();
+  // API keys only authenticate MCP clients (see ApiKeySettings) — pointless
+  // noise while the agent feature is off. Same flag ai.tsx and sam.tsx gate
+  // on; see docs/nes/marca.md.
+  const aiAgentEnabled = import.meta.env.AI_AGENT_ENABLED !== "false";
   const { themePreference, setThemePreference } = useThemePreference();
   const { data: session, isPending: isSessionPending } = useSession();
   const [isSaving, setIsSaving] = useState(false);
@@ -87,7 +91,7 @@ function PersonalSettings() {
 
       {isHosted ? (
         <>
-          <ApiKeySettings />
+          {aiAgentEnabled ? <ApiKeySettings /> : null}
 
           <section className="space-y-3">
             <h2 className="text-sm font-medium text-base-content/50">
@@ -95,7 +99,7 @@ function PersonalSettings() {
             </h2>
             <div className="flex items-start justify-between gap-6">
               <div>
-                <p className="text-sm">Help improve OpenSEO</p>
+                <p className="text-sm">Help improve the product</p>
                 <p className="mt-1 text-sm text-base-content/60">
                   Share analytics and usage data.
                 </p>

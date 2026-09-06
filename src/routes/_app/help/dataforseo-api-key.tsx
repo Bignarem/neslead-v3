@@ -13,7 +13,7 @@ function DataforseoApiKeyHelpPage() {
         <div className="card bg-base-100 border border-base-300">
           <div className="card-body gap-3">
             <h1 className="text-2xl font-semibold">
-              Configura tu clave de API de DataForSEO
+              Configura tu clave de API de datos SEO
             </h1>
             <p className="text-sm text-base-content/70">
               Hace falta el secreto <code>DATAFORSEO_API_KEY</code> antes de que
@@ -34,13 +34,13 @@ function DataforseoApiKeyHelpPage() {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  DataForSEO API Access
+                  el panel de acceso del proveedor
                 </a>{" "}
                 y solicita las credenciales de API por correo.
               </li>
               <li>
-                Codifica en base64 tu usuario y contraseña de API de DataForSEO
-                con este formato:
+                Codifica en base64 tu usuario y contraseña de API del proveedor
+                de datos SEO con este formato:
                 <pre className="mt-2 p-3 rounded bg-base-200 border border-base-300 overflow-x-auto text-xs">
                   <code>printf '%s' 'YOUR_LOGIN:YOUR_PASSWORD' | base64</code>
                 </pre>
