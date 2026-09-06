@@ -12,9 +12,14 @@ function tendenciaTexto(t: number | null) {
     : `${p}% frente al mes anterior`;
 }
 
-// Los cinco o seis números que le importan al dueño. La capa profunda
-// (keywords, posiciones, auditoría, backlinks) vive en /seo y en el menú;
-// aquí no se repite.
+function montoTexto(montoGanado30: number) {
+  return `US$${montoGanado30.toFixed(0)} cerrados`;
+}
+
+// Los cinco números que le importan al dueño: gente que lo encontró,
+// escribieron, reservaron, reseñas, tendencia. La capa profunda (keywords,
+// posiciones, auditoría, backlinks) vive en /seo y en el menú; aquí no se
+// repite.
 export function PortadaPage({ projectId }: { projectId: string }) {
   const portada = useQuery({
     queryKey: ["leads-portada", projectId],
@@ -53,6 +58,11 @@ export function PortadaPage({ projectId }: { projectId: string }) {
         ) : (
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
             <DatoCard
+              valor="—"
+              etiqueta="Gente que te encontró (30 días)"
+              detalle="Se activa al conectar la analítica del sitio"
+            />
+            <DatoCard
               valor={String(d.leads30)}
               etiqueta="Personas que escribieron (30 días)"
               detalle={tendenciaTexto(d.tendencia)}
@@ -60,10 +70,7 @@ export function PortadaPage({ projectId }: { projectId: string }) {
             <DatoCard
               valor={String(d.ganados30)}
               etiqueta="Ventas cerradas (30 días)"
-            />
-            <DatoCard
-              valor={`US$${d.montoGanado30.toFixed(0)}`}
-              etiqueta="Monto cerrado (30 días)"
+              detalle={montoTexto(d.montoGanado30)}
             />
             <DatoCard
               valor="—"
