@@ -123,3 +123,34 @@ contenido** — `beforeLoad` corre antes de montar `SamChat`, igual con o sin SS
 el mecanismo (código de estado HTTP real vs. componente 404 del router tras hidratar). Igualar
 las dos exigiría tocar `ssr: false` en `_project/p/$projectId/route.tsx`, una decisión de otro
 motivo y fuera de esta tarea; no se toca mientras no haga falta.
+
+## Fuga conocida del test de marca: lo que le dice el sistema al agente
+
+**Detectado el 2026-09-06 por la revisión de la Tarea 4d. No es un defecto de hoy; es una
+trampa para el día que se active el asistente propio.**
+
+`src/client/marca.test.ts` solo escanea la interfaz (`src/client/**`, `src/routes/**`). No
+mira el servidor. Y en `src/server/features/sam/samSystemPrompt.ts` las instrucciones que se
+le dan al modelo dicen literalmente *"You are SAM, the SEO agent inside OpenSEO"*, nombran esa
+marca cuatro veces más, y en otro punto le indican sugerir el correo del autor de upstream.
+
+Hoy no sale a ningún cliente porque `AI_AGENT_ENABLED=false` y el chat está bloqueado por
+ruta. **Pero si un cliente le preguntara al asistente "¿qué eres?", contestaría con la marca
+ajena, y el test no se enteraría**: no es una cadena de la interfaz, es texto que el modelo
+repite.
+
+**Qué hacer:** Neudys decidió (2026-09-04) apagar el chat ahora y **retomarlo más adelante
+como asistente propio**, con el gasto atado a los créditos del plan del cliente. Cuando llegue
+esa tarea, **reescribir el prompt del sistema es el primer paso, antes de tocar la interfaz**.
+Y valorar entonces si el test de marca debe cubrir también `src/server/features/*/prompt*`.
+
+## Otras fugas conocidas del test de marca
+
+- **Solo escanea `.ts`, `.tsx` y `.css`.** Los documentos legales (`src/client/features/legal/
+  *.md`) son visibles al cliente y hoy quedan fuera del escaneo. Están limpios porque se
+  escribieron desde cero, pero si alguien les mete marca ajena, el test no lo ve. Ampliar las
+  extensiones cuando se toque esa área.
+- **No detecta texto partido**: `"Open" + "SEO"` o una constante importada por nombre no
+  contienen la subcadena que busca.
+- **Una excepción de la lista blanca puede quedar obsoleta** si cambia la bandera que la
+  justifica, sin que nada avise.
