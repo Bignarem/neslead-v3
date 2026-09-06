@@ -3,6 +3,7 @@ import {
   Bot,
   ClipboardCheck,
   Globe,
+  Home,
   LayoutDashboard,
   Link2,
   MessageSquare,
@@ -17,16 +18,21 @@ import { GoogleGlyphMuted } from "@/client/features/gsc/GoogleGlyph";
 const projectNavItems = [
   {
     to: "/p/$projectId" as const,
-    label: "Dashboard",
-    icon: LayoutDashboard,
+    label: "Inicio",
+    icon: Home,
     // Without exact matching, the index path is a prefix of every project
-    // route and the Dashboard item would render active everywhere.
+    // route and the Inicio item would render active everywhere.
     activeOptions: { exact: true, includeSearch: false },
   },
   {
     to: "/p/$projectId/leads" as const,
     label: "Leads",
     icon: Users,
+  },
+  {
+    to: "/p/$projectId/seo" as const,
+    label: "Panel de SEO",
+    icon: LayoutDashboard,
   },
   {
     to: "/p/$projectId/keywords" as const,
@@ -108,7 +114,11 @@ export function getProjectNavGroups(projectId: string) {
   return [
     {
       label: "Overview",
-      items: [byPath("/p/$projectId"), byPath("/p/$projectId/leads")],
+      items: [
+        byPath("/p/$projectId"),
+        byPath("/p/$projectId/leads"),
+        byPath("/p/$projectId/seo"),
+      ],
     },
     {
       label: "Research",

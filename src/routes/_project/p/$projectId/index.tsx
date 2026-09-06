@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { DashboardPage } from "@/client/features/dashboard/DashboardPage";
+import { PortadaPage } from "@/client/features/portada/PortadaPage";
 
 export const Route = createFileRoute("/_project/p/$projectId/")({
-  component: DashboardRoute,
+  component: PortadaRoute,
 });
 
-function DashboardRoute() {
+function PortadaRoute() {
   const { projectId } = Route.useParams();
-  return <DashboardPage projectId={projectId} />;
+  return <PortadaPage projectId={projectId} />;
 }
